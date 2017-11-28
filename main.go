@@ -33,7 +33,7 @@ func sendMessages(w http.ResponseWriter, r *http.Request) {
 	var m message
 	err := decoder.Decode(&m)
 	if err != nil {
-		fmt.Println(err.Error)
+		fmt.Println(err.Error())
 	}
 	defer r.Body.Close()
 	chat = append(chat, m.Data)
