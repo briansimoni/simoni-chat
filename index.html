@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simoni Chat</title>
+</head>
+<body>
+<h1>Chat</h1>
+
+<div style="margin: 50px;">
+    <ul id="chat">
+
+    </ul>
+</div>
+
+<form id="sendMessages">
+    <input type="text" autofocus>
+    <input type="submit" value="Send">
+</form>
+
+
+<script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+    $("#sendMessages").submit(function(e) {
+        e.preventDefault();
+        sendMessages();
+    });
+
+
+    var sendMessages = function() {
+        message = String($('#sendMessages input').val());
+        message = message.trim();
+        var m = { "data": message }
+        $.ajax("/send",
+                {
+                    method: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify(m)
+                }
+        );
+
+        message = $('#sendMessages input:first-of-type').val('');
+    };
+
+    var getMessages = function() {
+        $.ajax("/getMessages",
+                {
+                    method: "GET"
+                }
+        ).done(function(data) {
+            renderedMessages = $('#chat li').length;
+            data = JSON.parse(data)
+            for( var i = renderedMessages; i < data.length; i++ ) {
+                $('#chat').append("<li>" + data[i] + "</li>");
+            }
+            // data.forEach(message => {
+            //     $('#chat').append("<li>" + message + "</li>");
+            // });
+            console.log(data)
+        });
+        setTimeout(getMessages, 1000);
+    };
+
+    getMessages();
+
+</script>
+
+</body>
+</html>
